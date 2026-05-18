@@ -1348,6 +1348,12 @@ unsigned int FBXConverter::ConvertMeshMultiMaterial(const MeshGeometry &mesh, co
     ai_assert(count_faces);
     ai_assert(count_vertices);
 
+    // Reject meshes where summed face vertex counts exceed available vertex data
+    if (count_vertices > vertices.size()) {
+        FBXImporter::LogError("ConvertMeshMultiMaterial: vertex count exceeds available vertex data, rejecting mesh");
+        return ~0u;
+    }
+
     // mapping from output indices to DOM indexing, needed to resolve weights or blendshapes
     std::vector<unsigned int> reverseMapping;
     std::map<unsigned int, unsigned int> translateIndexMap;
