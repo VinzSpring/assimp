@@ -1328,6 +1328,11 @@ unsigned int FBXConverter::ConvertMeshMultiMaterial(const MeshGeometry &mesh, co
     const std::vector<aiVector3D> &vertices = mesh.GetVertices();
     const std::vector<unsigned int> &faces = mesh.GetFaceIndexCounts();
 
+    if (mindices.size() != faces.size()) {
+        FBXImporter::LogError("material index count does not match face count, skipping mesh");
+        return ~0u;
+    }
+
     const bool process_weights = doc.Settings().readWeights && mesh.DeformerSkin() != nullptr;
 
     unsigned int count_faces = 0;
