@@ -565,6 +565,17 @@ void ReadBinaryDataArray(char type, uint32_t count, const char*& data, const cha
     };
 
     const uint32_t full_length = stride * count;
+
+    // Check for integer overflow
+    if (count != 0 && full_length / stride != count) {
+        ParseError("binary data array size overflow", static_cast<const Element*>(nullptr));
+    }
+
+    // Reject unreasonably large allocations (512 MB limit)
+    if (full_length > 512u * 1024u * 1024u) {
+        ParseError("binary data array too large", static_cast<const Element*>(nullptr));
+    }
+
     buff.resize(full_length);
 
     if(encmode == 0) {
